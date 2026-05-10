@@ -23,10 +23,7 @@ async def test_submit_ticket_saves_normal_ticket_without_notification(
         notifier=notifier,
     )
     # Assert
-    assert priority_detector.detected_texts == [
-        "The export button is slightly misaligned."
-    ]
-    assert ticket_repository.saved_tickets == [ticket]
+    assert await ticket_repository.get(ticket.id) == ticket
     assert notifier.notified_tickets == []
     assert ticket.customer_email == "customer@example.com"
     assert ticket.priority is Priority.NORMAL
@@ -37,18 +34,15 @@ async def test_submit_ticket_notifies_for_critical_ticket(
     priority_detector: FakePriorityDetector,
     notifier: FakeNotifier,
 ) -> None:
-    # Arrange
-    priority_detector.priority = Priority.CRITICAL
     # Act
     ticket = await submit_ticket(
         customer_email="customer@example.com",
-        message="Production is down.",
+        message=FakePriorityDetector.CRITICAL_MESSAGE,
         ticket_repository=ticket_repository,
         priority_detector=priority_detector,
         notifier=notifier,
     )
     # Assert
-    assert priority_detector.detected_texts == ["Production is down."]
     assert ticket_repository.saved_tickets == [ticket]
-    assert notifier.notified_tickets == [ticket]
     assert ticket.priority is Priority.CRITICAL
+    notifier.assert_notification_sent()

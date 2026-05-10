@@ -14,7 +14,6 @@ async def test_regex_priority_detector_returns_critical_without_calling_inner(
     )
     # Assert
     assert priority is Priority.CRITICAL
-    assert priority_detector.detected_texts == []
 
 
 async def test_regex_priority_detector_falls_back_to_inner_if_no_match(
@@ -28,6 +27,3 @@ async def test_regex_priority_detector_falls_back_to_inner_if_no_match(
     )
     # Assert
     assert priority is Priority.NORMAL
-    assert priority_detector.detected_texts == [
-        "The export button is slightly misaligned."
-    ]

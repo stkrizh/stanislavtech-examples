@@ -1,7 +1,7 @@
 import os
 from typing import AsyncIterator, cast
 from contextlib import asynccontextmanager
-from uuid import UUID
+from uuid import UUID, uuid4
 
 import httpx
 from fastapi import Depends, FastAPI, Request
@@ -65,6 +65,7 @@ async def create_ticket(
     )
     is_critical = llm_response.choices[0].message.content == "CRITICAL"
     ticket = Ticket(
+        id=uuid4(),
         customer_email=request.customer_email,
         message=request.message,
         is_critical=is_critical,

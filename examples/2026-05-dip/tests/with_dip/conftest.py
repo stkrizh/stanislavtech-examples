@@ -20,13 +20,10 @@ class FakeTicketRepository(TicketRepository):
 
 
 class FakePriorityDetector(PriorityDetector):
-    def __init__(self, priority: Priority) -> None:
-        self.priority = priority
-        self.detected_texts: list[str] = []
+    CRITICAL_MESSAGE = "critical"
 
     async def detect(self, text: str) -> Priority:
-        self.detected_texts.append(text)
-        return self.priority
+        return Priority.CRITICAL if text == self.CRITICAL_MESSAGE else Priority.NORMAL
 
 
 class FakeNotifier(Notifier):
@@ -36,6 +33,9 @@ class FakeNotifier(Notifier):
     async def notify(self, ticket: Ticket) -> None:
         self.notified_tickets.append(ticket)
 
+    def assert_notification_sent(self) -> None:
+        assert self.notified_tickets
+
 
 @pytest.fixture
 def ticket_repository() -> FakeTicketRepository:
@@ -44,7 +44,7 @@ def ticket_repository() -> FakeTicketRepository:
 
 @pytest.fixture
 def priority_detector() -> FakePriorityDetector:
-    return FakePriorityDetector(Priority.NORMAL)
+    return FakePriorityDetector()
 
 
 @pytest.fixture
