@@ -80,9 +80,6 @@ class RegexPriorityDetector(PriorityDetector):
         return await self._inner.detect(text)
 
 
-RegexPrioriryDetector = RegexPriorityDetector
-
-
 class TelegramNotifier(Notifier):
     def __init__(
         self,
