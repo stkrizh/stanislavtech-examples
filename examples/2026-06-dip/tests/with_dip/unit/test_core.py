@@ -43,6 +43,6 @@ async def test_submit_ticket_notifies_for_critical_ticket(
         notifier=notifier,
     )
     # Assert
-    assert ticket_repository.saved_tickets == [ticket]
+    assert await ticket_repository.get(ticket.id) == ticket
     assert ticket.priority is Priority.CRITICAL
     notifier.assert_notification_sent()
